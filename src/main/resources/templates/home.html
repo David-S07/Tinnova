@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymelaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"/>
+
+    <title>Home</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <a href="http://localhost:8080/">
+                <button type="button">Home</button>
+            </a> <br>
+        </div>
+        <div class="col-sm-8">
+            <h1 class="card-title"> Lista de Veículos</h1>
+        </div>
+    </div>
+
+</div>
+
+<div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    Cadastro realizado com sucesso.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div th:if="${atualizou}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    Atualização bem sucedida
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div th:if="${apagou}" class="alert alert-success alert-dismissible fade show text-center" role="alert">
+    Registro excluído com sucesso.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="container ">
+
+    <div class="table-responsive">
+
+        <label>Filtrar por nome: </label> <br>
+        <form action="pesquisarveiculo" , method="post" class="form-inline my-2 my-lg-0">
+            <input name="pesquisaVeiculo" class="form-control mr-sm-2" type="search" placeholder="ex: Nivus, Palio"
+                   aria-label="Pesquisar">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
+        </form>
+        <br>
+
+        <label>Filtrar por ano de fabricação</label>
+        <form action="pesquisardecadaveiculo" , method="post" class="form-inline my-2 my-lg-0">
+            <input name="pesquisadecadaveiculo" class="form-control mr-sm-2" type="search"
+                   placeholder="Ano de fabricação" aria-label="ex: 2015">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
+        </form>
+        <br>
+
+        <label>Filtrar por concessionária: </label> <br>
+        <form action="pesquisarmarcaveiculo" , method="post" class="form-inline my-2 my-lg-0">
+            <input name="pesquisamarcaveiculo" class="form-control mr-sm-2" type="search"
+                   placeholder="ex: Fiat, Jeep" aria-label="Pesquisar">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
+        </form>
+        <br>
+
+        <label>Filtrar por data: </label> <br>
+        <form action="filterdates" , method="post" class="form-inline my-2 my-lg-0">
+            <select name="filterdate" class="form-control">
+                <option value="10/11/2021">Data de cadastro mais antiga</option>
+                <option value="11/11/2021">Data de cadastro mais recente</option>
+            </select> <br>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Ordenar</button>
+        </form>
+        <br>
+
+        <label>Status: </label> <br>
+        <form action="pesquisarvendidoveiculo" , method="post" class="form-inline my-2 my-lg-0">
+            <select name="pesquisavendidoveiculo" class="form-control">
+                <option value="">Todos</option>
+                <option value="false">Disponivel</option>
+                <option value="true">Vendido</option>
+            </select> <br>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Status</button>
+        </form>
+        <br>
+
+
+        <table class="table table-hover mb-1">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Veículo</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Ano Fabricação</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Status</th>
+                <th scope="col">Data Cadastrada</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Deletar</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr th:each="c : ${carroList}" th:object="${c}">
+                <td th:text="*{veiculo}">Veículo</td>
+                <td th:text="*{marca}">Marca</td>
+                <td th:text="*{fabricacao}">Ano Fabricação</td>
+                <td th:text="*{descricao}">Descrição</td>
+                <td th:text="*{vendido} ? 'Vendido' : 'Disponivel'">Status</td>
+                <td th:text="*{#dates.format(created, 'dd-MM-yyyy')}">Data Cadastrada</td>
+
+                <td>
+                    <a class="btn btn-outline-warning" th:href="@{'/editar/' + *{id}}">Editar</a> &nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                    <a class="btn btn-outline-danger" th:href="@{'/deletar/' + *{id}}">Deletar </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${#lists.isEmpty(carroList)}">
+            <div>O estoque está vazio</div>
+        </div>
+        <div th:unless="${#lists.isEmpty(carroList)}">
+            <div th:text=" 'A quantidade encontrada é igual a: ' + ${#lists.size(carroList)}"></div>
+        </div>
+    </div>
+    <a class="btn btn-outline-secondary btn-lg btn-block " href="/cadastrar">Cadastrar veículos</a>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+
+</body>
+</html>
